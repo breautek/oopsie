@@ -56,6 +56,16 @@ class MyOopsie extends Oopsie{}
 OopsieFactory.getInstance().registerOopsie(MyOopsie);
 ```
 
+Programs that can receive a serialized version of `MyOopsie` can re-create a `MyOopsie`:
+
+```typescript
+let e: Oopsie = OopsieFactory.getInstance().create(new MyOopsie('oops').serialize());
+Oopsie.is(MyOopsie, e);// returns true
+```
+
+Using an `OopsieFactory` to create an Oopsie who has a missing registration will result
+an the base `Oopsie` instance being created instead.
+
 #### Installation Notes
 
 For applications, use `npm install @breautek/oopsie`
