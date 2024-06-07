@@ -4,3 +4,5 @@
 /src
 /build-tools
 /makeRelease.sh
+/.gitmodules
+*.tgz
