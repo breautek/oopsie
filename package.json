@@ -1,0 +1,39 @@
+{
+  "name": "@breautek/oopsie",
+  "version": "0.0.0",
+  "description": "An error library",
+  "main": "lib/api.js",
+  "types": "lib/api.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:debug": "tsc --inlineSourceMap",
+    "test": "jest",
+    "preversion": "npm test",
+    "prepare": "npm run build:debug",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/breautek/oopsie.git"
+  },
+  "keywords": [
+    "Error"
+  ],
+  "author": "norman@breautek.com",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/breautek/oopsie/issues"
+  },
+  "homepage": "https://github.com/breautek/oopsie#readme",
+  "devDependencies": {
+    "@types/jest": "29.5.12",
+    "jest": "29.7.0",
+    "ts-jest": "29.1.4",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.5"
+  },
+  "dependencies": {
+    "@breautek/serializer": "0.1.1",
+    "dedent": "1.5.3"
+  }
+}
