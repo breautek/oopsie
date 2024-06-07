@@ -18,8 +18,8 @@ export class OopsieFactory {
         return OopsieFactory.$instance;
     }
 
-    public registerOopsieConstructor(name: string, ctor: IOopsieCtor): void {
-        this.$ctors.set(name, ctor);
+    public registerOopsie(ctor: IOopsieCtor): void {
+        this.$ctors.set(ctor.prototype.constructor.name, ctor);
     }
 
     public create(data: IOopsie): Oopsie {
