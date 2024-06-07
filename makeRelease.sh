@@ -21,7 +21,9 @@ assertLastCall
 npm publish --tag debug
 assertLastCall
 
-pm run build
+git checkout -- package.json package-lock.json
+
+npm run build
 npm version $VERSION
 npm publish
 
