@@ -1,6 +1,6 @@
 {
   "name": "@breautek/oopsie",
-  "version": "0.0.1-debug",
+  "version": "0.0.2-debug",
   "description": "An error library",
   "main": "lib/api.js",
   "types": "lib/api.d.ts",
