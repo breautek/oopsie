@@ -7,10 +7,7 @@
   "scripts": {
     "build": "tsc",
     "build:debug": "tsc --inlineSourceMap",
-    "test": "jest",
-    "preversion": "npm test",
-    "prepare": "npm run build:debug",
-    "postversion": "git push && git push --tags"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
