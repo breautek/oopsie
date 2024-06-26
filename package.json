@@ -34,7 +34,7 @@
     "typescript": "5.4.5"
   },
   "dependencies": {
-    "@breautek/serializer": "0.1.1",
+    "@breautek/serializer": "file:../serializer/breautek-serializer-0.1.1.tgz",
     "dedent": "1.5.3"
   }
 }

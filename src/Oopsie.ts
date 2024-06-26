@@ -6,22 +6,29 @@ import {
 } from '@breautek/serializer'
 import dedent from 'dedent';
 
-export interface IErrorCause {
+// export interface IErrorCause {
+//     name: string;
+//     message: string;
+//     stack: string;
+//     cause: IErrorCause | null;
+// }
+
+// interface _IOopsie<TDetails extends TSerializables> {
+//     name: string;
+//     message: string;
+//     stack: string;
+//     cause: IErrorCause | null;
+//     details: TDetails | null;
+// }
+interface _IOopsie<TDetails extends TSerializables = TSerializables> {
     name: string;
     message: string;
     stack: string;
-    cause: IErrorCause | null;
+    cause: _IOopsie | null;
+    details: TDetails | null;
 }
 
-interface _IOopsie {
-    name: string;
-    message: string;
-    stack: string;
-    cause: IErrorCause | null;
-    details: TSerializables | null;
-}
-
-export type IOopsie = TSerializable<_IOopsie>;
+export type IOopsie<TDetails extends TSerializables = TSerializables> = TSerializable<_IOopsie<TDetails>>;
 
 /**
  * An oopsie is an error class that is more structured.
@@ -49,9 +56,9 @@ export type IOopsie = TSerializable<_IOopsie>;
  * state should be private data, otherwise Oopsie's cannot be created properly
  * with the OopsieFactory.
  */
-export class Oopsie<TDetails extends TSerializables = TSerializables> extends Error implements ISerializable<IOopsie> {
+export class Oopsie<TDetails extends TSerializables = TSerializables> extends Error implements ISerializable<IOopsie<TDetails>> {
     private $cause: Error | null;
-    private $details: TSerializables | null;
+    private $details: TDetails | null;
 
     public constructor(message: string, cause?: Error | null, details?: TDetails | null) {
         super(message);
@@ -61,7 +68,7 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
         this.$details = details || null;
     }
 
-    public static is<T extends typeof Oopsie>(errorClass: T, x: unknown): x is InstanceType<T> {
+    public static is<T extends IOopsieCtor>(errorClass: T, x: unknown): x is InstanceType<T> {
         if (!(x instanceof Oopsie)) {
             return false;
         }
@@ -69,27 +76,45 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
         return x instanceof errorClass;
     }
 
+    // public static is<T extends typeof Oopsie>(errorClass: T, x: unknown): x is InstanceType<T> {
+    //     if (!(x instanceof Oopsie)) {
+    //         return false;
+    //     }
+
+    //     return x instanceof errorClass;
+    // }
+
     public getCause(): Error | null {
         return this.$cause;
     }
 
-    public getDetails(): TSerializables | null {
+    public getDetails(): TDetails | null {
         return this.$details;
     }
 
-    private $serializeCause(): IErrorCause | null {
+    private $serializeCause(): IOopsie | null {
         if (!this.$cause) {
             return null;
         }
 
-        let cause: IErrorCause | null = null;
+        let cause: IOopsie | null = null;
         if (Oopsie.is(Oopsie, this.$cause)) {
             cause = this.$cause.$serializeCause();
+        }
+        else if (this.$cause instanceof Error) {
+            cause = {
+                name: this.$cause.name,
+                message: this.$cause.message,
+                stack: this.$cause.stack || 'Stack not available',
+                cause: null,
+                details: null
+            };
         }
 
         return {
             name: this.$cause.name,
             message: this.$cause.message,
+            details: this.$details,
             stack: this.$cause.stack || 'Stack not available',
             cause: cause
         };
@@ -99,7 +124,7 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
      * Returns a serializable object representation of this error
      * @returns 
      */
-    public serialize(): IOopsie {
+    public serialize(): IOopsie<TDetails> {
         return {
             name: this.name,
             message: this.message,
@@ -159,23 +184,32 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
      * 
      * @param x 
      */
-    public static wrap(x: string | Error | unknown): Oopsie {
-        if (Oopsie.is(Oopsie, x)) {
-            return x;
-        }
+    // public static wrap(x: string | Error | unknown): Oopsie<TSerializables> {
+    //     if (Oopsie.is(Oopsie, x)) {
+    //         // If x is an Oopsie, simply return it as is.
+    //         return x;
+    //     }
 
-        if (x instanceof Error) {
-            return new Oopsie(x.message, x);
-        }
-        else if (typeof x === 'string') {
-            return new Oopsie(x);
-        }
-        else {
-            return new Oopsie('Unwrappable Error');
-        }
-    }
+    //     if (x instanceof Error) {
+    //         // If x is an error, then use it as the cause, and it's message
+    //         // for a new Oopsie
+    //         return new Oopsie(x.message, x);
+    //     }
+    //     else if (typeof x === 'string') {
+    //         // If x is simply a string, use it as an Oopsie message
+    //         return new Oopsie(x);
+    //     }
+    //     else {
+    //         // Anything else we don't know how to handle, and cannot be
+    //         // guarenteed to be serializable. We wil attempt ot serialize
+    //         // via JSON.stringify and attach it as additional data.
+    //         return new Oopsie('Unwrappable Error', null, {
+    //             thrown: JSON.stringify(x)
+    //         });
+    //     }
+    // }
 }
 
-export interface IOopsieCtor {
-    new(message: string, cause?: Error | null, details?: TSerializables | null): Oopsie;
+export interface IOopsieCtor<TDetails extends TSerializables = TSerializables> {
+    new (message: string, cause?: Error | null, details?: TDetails | null): Oopsie<TDetails>;
 }

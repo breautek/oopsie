@@ -1,6 +1,6 @@
 
 import * as api from '../src/api';
-import {Oopsie, IOopsie, IErrorCause} from '../src/Oopsie';
+import {Oopsie, IOopsie/*, IErrorCause*/} from '../src/Oopsie';
 import {OopsieFactory} from '../src/OopsieFactory';
 
 describe('Public API', () => {
@@ -16,14 +16,14 @@ describe('Public API', () => {
         let x: api.IOopsieCtor = Oopsie;
     });
 
-    it('IErrorCause', () => {
-        let x: IErrorCause = {
-            name: 'test',
-            message: 'test',
-            stack: 'test',
-            cause: null
-        };
-    });
+    // it('IErrorCause', () => {
+    //     let x: IErrorCause = {
+    //         name: 'test',
+    //         message: 'test',
+    //         stack: 'test',
+    //         cause: null
+    //     };
+    // });
 
     it('IOopsie', () => {
         let x: IOopsie = new Oopsie('test message').serialize();
