@@ -162,30 +162,30 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
      * 
      * @param x 
      */
-    // public static wrap(x: string | Error | unknown): Oopsie<TSerializables> {
-    //     if (Oopsie.is(Oopsie, x)) {
-    //         // If x is an Oopsie, simply return it as is.
-    //         return x;
-    //     }
+    public static wrap(x: string | Error | unknown): Oopsie<TSerializables> {
+        if (Oopsie.is(Oopsie, x)) {
+            // If x is an Oopsie, simply return it as is.
+            return x;
+        }
 
-    //     if (x instanceof Error) {
-    //         // If x is an error, then use it as the cause, and it's message
-    //         // for a new Oopsie
-    //         return new Oopsie(x.message, x);
-    //     }
-    //     else if (typeof x === 'string') {
-    //         // If x is simply a string, use it as an Oopsie message
-    //         return new Oopsie(x);
-    //     }
-    //     else {
-    //         // Anything else we don't know how to handle, and cannot be
-    //         // guarenteed to be serializable. We wil attempt ot serialize
-    //         // via JSON.stringify and attach it as additional data.
-    //         return new Oopsie('Unwrappable Error', null, {
-    //             thrown: JSON.stringify(x)
-    //         });
-    //     }
-    // }
+        if (x instanceof Error) {
+            // If x is an error, then use it as the cause, and it's message
+            // for a new Oopsie
+            return new Oopsie(x.message, x);
+        }
+        else if (typeof x === 'string') {
+            // If x is simply a string, use it as an Oopsie message
+            return new Oopsie(x);
+        }
+        else {
+            // Anything else we don't know how to handle, and cannot be
+            // guarenteed to be serializable. We wil attempt ot serialize
+            // via JSON.stringify and attach it as additional data.
+            return new Oopsie('Unwrappable Error', null, {
+                thrown: JSON.stringify(x)
+            });
+        }
+    }
 }
 
 export interface IOopsieCtor<TDetails extends TSerializables = TSerializables> {

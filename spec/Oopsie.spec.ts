@@ -17,32 +17,32 @@ describe('Oopsie', () => {
         expect(oops.name).toBe('CustomOopsie');
     });
 
-    // describe('wrapping', () => {
-    //     it('wrapped error creates an oopsie with the error has the cause', () => {
-    //         let e: Error = new Error('test error');
-    //         let o: Oopsie = Oopsie.wrap(e);
-    //         expect(o.message).toBe('test error');
-    //         expect(o.getCause()).toBe(e);
-    //     });
+    describe('wrapping', () => {
+        it('wrapped error creates an oopsie with the error has the cause', () => {
+            let e: Error = new Error('test error');
+            let o: Oopsie = Oopsie.wrap(e);
+            expect(o.message).toBe('test error');
+            expect(o.getCause()).toBe(e);
+        });
 
-    //     it('wrapped oopsie returns the oopsie as is', () => {
-    //         let e: Oopsie = new Oopsie('test error');
-    //         let o: Oopsie = Oopsie.wrap(e);
-    //         expect(o).toBe(e);
-    //     });
+        it('wrapped oopsie returns the oopsie as is', () => {
+            let e: Oopsie = new Oopsie('test error');
+            let o: Oopsie = Oopsie.wrap(e);
+            expect(o).toBe(e);
+        });
 
-    //     it('wrapped string creates an oopsie', () => {
-    //         let e: string = 'thrown string';
-    //         let o: Oopsie = Oopsie.wrap(e);
-    //         expect(o.message).toBe('thrown string');
-    //     });
+        it('wrapped string creates an oopsie', () => {
+            let e: string = 'thrown string';
+            let o: Oopsie = Oopsie.wrap(e);
+            expect(o.message).toBe('thrown string');
+        });
 
-    //     it('wrapping an unsupported object creates an unwrappable oopsie', () => {
-    //         let e: {} = {};
-    //         let o: Oopsie = Oopsie.wrap(e);
-    //         expect(o.message).toBe('Unwrappable Error');
-    //     });
-    // });
+        it('wrapping an unsupported object creates an unwrappable oopsie', () => {
+            let e: {} = {};
+            let o: Oopsie = Oopsie.wrap(e);
+            expect(o.message).toBe('Unwrappable Error');
+        });
+    });
 
     describe('stacktraces', () => {
         it('produces a simple stacktrace', () => {
