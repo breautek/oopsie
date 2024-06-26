@@ -6,20 +6,6 @@ import {
 } from '@breautek/serializer'
 import dedent from 'dedent';
 
-// export interface IErrorCause {
-//     name: string;
-//     message: string;
-//     stack: string;
-//     cause: IErrorCause | null;
-// }
-
-// interface _IOopsie<TDetails extends TSerializables> {
-//     name: string;
-//     message: string;
-//     stack: string;
-//     cause: IErrorCause | null;
-//     details: TDetails | null;
-// }
 interface _IOopsie<TDetails extends TSerializables = TSerializables> {
     name: string;
     message: string;
@@ -75,14 +61,6 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
 
         return x instanceof errorClass;
     }
-
-    // public static is<T extends typeof Oopsie>(errorClass: T, x: unknown): x is InstanceType<T> {
-    //     if (!(x instanceof Oopsie)) {
-    //         return false;
-    //     }
-
-    //     return x instanceof errorClass;
-    // }
 
     public getCause(): Error | null {
         return this.$cause;
