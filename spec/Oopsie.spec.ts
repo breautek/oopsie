@@ -1,4 +1,5 @@
 
+import { TSerializables } from '@breautek/serializer';
 import {
     Oopsie,
     IOopsie
@@ -18,11 +19,11 @@ describe('Oopsie', () => {
     });
 
     describe('wrapping', () => {
-        it('wrapped error creates an oopsie with the error has the cause', () => {
+        it('wrapped error creates an oopsie derived from the original error', () => {
             let e: Error = new Error('test error');
             let o: Oopsie = Oopsie.wrap(e);
             expect(o.message).toBe('test error');
-            expect(o.getCause()).toBe(e);
+            expect(o.stack).toBe(e.stack);
         });
 
         it('wrapped oopsie returns the oopsie as is', () => {
@@ -122,8 +123,8 @@ describe('Oopsie', () => {
         });
 
         it('is CustomOopsie should return false', () => {
-            class CustomOopsie extends Oopsie {}
-            class AnotherOoopsie extends Oopsie {}
+            class CustomOopsie extends Oopsie<number> {}
+            class AnotherOoopsie extends Oopsie<TSerializables> {}
 
             let error: CustomOopsie = new CustomOopsie('test error');
             let e: unknown = error;

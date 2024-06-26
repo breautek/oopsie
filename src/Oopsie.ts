@@ -54,11 +54,7 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
         this.$details = details || null;
     }
 
-    public static is<T extends IOopsieCtor>(errorClass: T, x: unknown): x is InstanceType<T> {
-        if (!(x instanceof Oopsie)) {
-            return false;
-        }
-
+    public static is<T extends IOopsieCtor<TSerializables>>(errorClass: T, x: unknown): x is InstanceType<T> {
         return x instanceof errorClass;
     }
 
@@ -154,7 +150,7 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
      * If x is already an Oopsie, the oopsie is returned as is. Otherwise an
      * attempt to wrap x is made:
      * 
-     * If x is an Error, a generic oopsie will be made using Error as the cause.
+     * If x is an Error, it will be adapted using a generic Oopsie.
      * If x is a string, it will be used as the message, with no defined cause.
      * 
      * If x is any other object, then a generic oopsie will be made, but
@@ -171,18 +167,29 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
         if (x instanceof Error) {
             // If x is an error, then use it as the cause, and it's message
             // for a new Oopsie
-            return new Oopsie(x.message, x);
+            let o: Oopsie = new Oopsie(x.message);
+            if (x.stack) {
+                // Carry over the original stack if one exists
+                o.stack = x.stack;
+            }
+            return o;
         }
         else if (typeof x === 'string') {
             // If x is simply a string, use it as an Oopsie message
             return new Oopsie(x);
         }
         else {
+            let thrown: string = x?.toString() || 'Unstringifiable';
+            try {
+                thrown = JSON.stringify(x);
+            }
+            catch (ex) {}
+
             // Anything else we don't know how to handle, and cannot be
             // guarenteed to be serializable. We wil attempt ot serialize
             // via JSON.stringify and attach it as additional data.
             return new Oopsie('Unwrappable Error', null, {
-                thrown: JSON.stringify(x)
+                thrown: thrown
             });
         }
     }
