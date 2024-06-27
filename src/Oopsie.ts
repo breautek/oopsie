@@ -200,8 +200,6 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
         }
 
         if (x instanceof Error) {
-            // If x is an error, then use it as the cause, and it's message
-            // for a new Oopsie
             let o: Oopsie = new Oopsie(x.message);
             if (x.stack) {
                 // Carry over the original stack if one exists
