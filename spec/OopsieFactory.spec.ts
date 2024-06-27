@@ -28,14 +28,4 @@ describe('OopsieFactory', () => {
         expect(Oopsie.is(Oopsie, e)).toBe(true);
         expect(console.warn).toHaveBeenNthCalledWith(1, 'Oopsie named "unregistered" attempted to be created via OopsieFactory but unregistered is not registered.');
     });
-
-    it('test', () => {
-        class XOopsie extends Oopsie {
-            public constructor() {
-                super('test');
-            }
-        };
-
-        OopsieFactory.getInstance().registerOopsie(XOopsie);
-    })
 });

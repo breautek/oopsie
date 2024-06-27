@@ -6,12 +6,18 @@ import {
 } from '@breautek/serializer'
 import dedent from 'dedent';
 
+export interface IOopsieLocale {
+    key: string;
+    params: Record<string, string>;
+}
+
 interface _IOopsie<TDetails extends TSerializables = TSerializables> {
     name: string;
     message: string;
     stack: string;
     cause: _IOopsie | null;
     details: TDetails | null;
+    locale: IOopsieLocale;
 }
 
 export type IOopsie<TDetails extends TSerializables = TSerializables> = TSerializable<_IOopsie<TDetails>>;
@@ -35,23 +41,40 @@ export type IOopsie<TDetails extends TSerializables = TSerializables> = TSeriali
  * 
  * The message field is highly recommended to use a meaningful message for
  * developers. If building an error for end-user feedback, consider making a
- * subclass and using the details for user-facing data, such as locale keys
- * and parameters.
+ * subclass and implement getLocaleKey/getLocaleParams for locale support as
+ * well as using the details for user-facing data.
  * 
  * When subclassing, avoid attaching state outside of the details unless if that
  * state should be private data, otherwise Oopsie's cannot be created properly
  * with the OopsieFactory.
+ * 
+ * When subclassing, the constructor signature must be kept in tact. All Oopsie
+ * classes shall use the IOopsieCtor
  */
 export class Oopsie<TDetails extends TSerializables = TSerializables> extends Error implements ISerializable<IOopsie<TDetails>> {
     private $cause: Error | null;
     private $details: TDetails | null;
+    private $locale: IOopsieLocale;
 
     public constructor(message: string, cause?: Error | null, details?: TDetails | null) {
         super(message);
 
+        this.$locale = {
+            key: this.getLocaleKey(),
+            params: this.getLocaleParams()
+        };
+
         this.name = this.constructor.name;
         this.$cause = cause || null;
         this.$details = details || null;
+    }
+
+    public getLocaleKey(): string {
+        return 'breautek/oopsie/not-defined';
+    }
+
+    public getLocaleParams(): Record<string, string> {
+        return {};
     }
 
     public static is<T extends IOopsieCtor<TSerializables>>(errorClass: T, x: unknown): x is InstanceType<T> {
@@ -81,7 +104,11 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
                 message: this.$cause.message,
                 stack: this.$cause.stack || 'Stack not available',
                 cause: null,
-                details: null
+                details: null,
+                locale: {
+                    key: this.$locale.key,
+                    params: this.$locale.params
+                }
             };
         }
 
@@ -90,7 +117,11 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
             message: this.$cause.message,
             details: this.$details,
             stack: this.$cause.stack || 'Stack not available',
-            cause: cause
+            cause: cause,
+                locale: {
+                    key: this.$locale.key,
+                    params: this.$locale.params
+                }
         };
     }
 
@@ -104,7 +135,11 @@ export class Oopsie<TDetails extends TSerializables = TSerializables> extends Er
             message: this.message,
             stack: this.getStack(),
             cause: this.$serializeCause(),
-            details: this.getDetails()
+            details: this.getDetails(),
+            locale: {
+                key: this.$locale.key,
+                params: this.$locale.params
+            }
         };
     }
 
